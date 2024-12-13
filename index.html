@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+     //interval each second
+    const interval =  setInterval(() => {
+        const shadowHost =  document.querySelector('.PSPDFKit-Container');
+        // console.log(".")
+        if (shadowHost && shadowHost.shadowRoot) {
+          const toolbar = shadowHost.shadowRoot.querySelector('[role="toolbar"]');
+          if (toolbar) {
+            console.log(toolbar)
+            // toolbar.style.display = 'none';
+
+            // go through all the children of the toolbar and hide all that are not data-block-id="export-pdf"
+            toolbar.childNodes.forEach((child) => {
+              if (child.getAttribute('data-block-id') !== 'export-pdf') {
+                child.style.display = 'none';
+              }
+            });
+
+            // //add dom observer to the toolbar if more children are added hide them
+            // const observer = new MutationObserver((mutations) => {
+            //   mutations.forEach((mutation) => {
+            //     console.log(mutation);
+            //     mutation.addedNodes.forEach((node) => {
+            //       if (node.getAttribute('data-block-id') !== 'export-pdf') {
+            //         node.style.display = 'none';
+            //       }
+            //     });
+            //   });
+            // });
+
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    console.log(mutation);  // This will show all mutations, including added nodes, attribute changes, etc.
+
+    // If the mutation type is 'childList' and new nodes are added
+    if (mutation.type === 'childList') {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === 1 && node.getAttribute('data-block-id') !== 'export-pdf') {
+          node.style.display = 'none';
+        }
+      });
+    }
+  });
+});
+
+// Start observing the toolbar for any kind of mutations (children, attributes, or character data)
+observer.observe(toolbar, {
+  childList: true,    // Observe child additions/removals
+});
+
+           
+
+
+            clearInterval(interval);
+            
+          }
+        }
+      }, 50)
+
+    </script>
+  </body>
+</html>
